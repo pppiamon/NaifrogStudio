@@ -1,0 +1,63 @@
+plugins { id 'com.android.application' }
+
+def signingFile = rootProject.file('signing.properties')
+def signing = new Properties()
+if (signingFile.exists()) signingFile.withInputStream { signing.load(it) }
+
+android {
+    namespace 'com.naifrog.studio'
+    compileSdk 36
+    defaultConfig {
+        applicationId 'com.naifrog.studio'
+        minSdk 28
+        targetSdk 36
+        versionCode 6
+        versionName '1.4.0'
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        buildConfigField 'String', 'SERVICE_URL', '"' + (project.findProperty('serviceUrl') ?: '') + '"'
+    }
+    signingConfigs {
+        release {
+            if (signingFile.exists()) {
+                storeFile rootProject.file(signing['storeFile'])
+                storePassword signing['storePassword']
+                keyAlias signing['keyAlias']
+                keyPassword signing['keyPassword']
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures { buildConfig true }
+    sourceSets.main.assets.srcDir(layout.buildDirectory.dir('generated/connectionAssets'))
+    compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+    testOptions { unitTests.includeAndroidResources = true }
+}
+tasks.register('prepareConnectionProfile') {
+    def input = providers.gradleProperty('connectionFile')
+    inputs.property('connectionFile', input.orElse(''))
+    if (input.isPresent()) inputs.file(input.get())
+    outputs.dir(layout.buildDirectory.dir('generated/connectionAssets'))
+    doLast {
+        def target = layout.buildDirectory.file('generated/connectionAssets/connection.json').get().asFile
+        target.parentFile.mkdirs()
+        if (input.isPresent()) target.bytes = file(input.get()).bytes
+        else if (target.exists()) target.delete()
+    }
+}
+tasks.named('preBuild').configure { dependsOn('prepareConnectionProfile') }
+dependencies {
+    implementation platform('org.jetbrains.kotlin:kotlin-bom:1.9.24')
+    implementation 'androidx.core:core:1.16.0'
+    implementation 'com.google.mlkit:face-detection:16.1.7'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.robolectric:robolectric:4.16.1'
+    androidTestImplementation 'androidx.test:runner:1.6.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+}

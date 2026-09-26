@@ -1,0 +1,8 @@
+奶蛙原图提取
+仓库：https://github.com/timerring/codex-pet-naiwa
+读取来源：https://raw.githubusercontent.com/timerring/codex-pet-naiwa/main/naifrog/spritesheet.webp
+提取时间：2026-09-16T10:05:18.261Z
+独立 PNG：74 张，每格 192 × 208 像素。
+文件名 r 为原图行，c 为原图列，编号均从 1 开始。只跳过全透明格子；未重绘、未修改五官、未放大、未删除重复画面。
+仓库 README 声明：原创内容使用 MIT；Credits 中的第三方素材不在 MIT 授权范围内。素材及角色权利归原权利人。
+Credits：Nitrogen216/awesome_pets；LynnShaw/naiwa-pet。

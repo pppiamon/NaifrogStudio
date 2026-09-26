@@ -1,0 +1,14 @@
+.gradle/
+**/build/
+local.properties
+signing.properties
+*.jks
+*.keystore
+server/.env
+server/public.env
+server/data/
+server/data-connected/
+server/connection/
+server/tools/
+server/node_modules/
+release/

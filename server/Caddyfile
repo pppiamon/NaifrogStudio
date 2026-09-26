@@ -1,0 +1,3 @@
+{$NAIFROG_DOMAIN} {
+    reverse_proxy naifrog:8787
+}
